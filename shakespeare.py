@@ -1,12 +1,21 @@
 import numpy as np
+import time
 from pyspark.sql.functions import split, explode, col, expr, lit, regexp_replace, lower, trim, translate
 from pyspark.sql import SparkSession
+from pyspark import SparkContext, SparkConf
 
 # spark = SparkSession.builder.master("local").getOrCreate()
+start_time = time.time()
+spark = SparkSession \
+    .builder \
+    .appName("Word count") \
+    .config("spark.some.config.option", "some-value") \
+    .getOrCreate()
+conf = spark.sparkContext._conf.setAll([('spark.executor.cores', '1')])
+spark.sparkContext.stop()
+spark = SparkSession.builder.config(conf=conf).getOrCreate()
 
-spark = SparkSession.builder.master("local").appName("Word Count").getOrCreate()
-
-shakes = spark.read.format("text").load("/content/Shakespeare.txt").withColumnRenamed("value", "line")
+shakes = spark.read.format("text").load("Shakespeare.txt").withColumnRenamed("value", "line")
 # shakes.show()
 
 shakes = shakes.select(explode(split(col("line"), " ")).alias("word_per_line"))
@@ -36,3 +45,5 @@ ar = np.array(temp_list)
 for i in range(1,len(ar)):
   if  ar[i] == 1: result = result + 1    
 print("Total number of words without repetition is = ", result) #12336
+
+print("--- %s seconds ---" % (time.time() - start_time))
