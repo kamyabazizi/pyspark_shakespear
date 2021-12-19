@@ -35,7 +35,7 @@ for core in cores:
 
 
 
-  start_time = time.time()
+  
   shakes = shakes.select(lower(trim(regexp_replace(col("word_per_line"),"\\p{Punct}",''))).alias("punc_rmv"))
 
   # how many distict words are in this text
@@ -47,7 +47,7 @@ for core in cores:
   #print("Top 10 most repetitive words:")
   #shakes_grp.show(10)
 
-
+  start_time = time.time()
   # how many words without repetition
   result = 0
   temp_list = shakes_grp.select('count').collect()
