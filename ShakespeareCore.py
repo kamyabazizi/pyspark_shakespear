@@ -49,13 +49,9 @@ for core in cores:
 
   start_time = time.time()
   # how many words without repetition
-  result = 0
-  temp_list = shakes_grp.select('count').collect()
-  ar = np.array(temp_list)
-  for i in range(1,len(ar)):
-    if  ar[i] == 1: result = result + 1  
-  tms.append(time.time() - start_time)  
-  #print("Total number of words without repetition is = ", result) #12336
+  print("the number of words have been used once:")
+  print(shakes_grp.where(col('count') == 1).count())
+  tms.append(time.time() - start_time) 
 
 fig = plt.figure()
     
